@@ -17,6 +17,7 @@ These are my notes from tutorials on using K8s to deploy applications.
     * [Creating a Secret](#creating-a-secret)
     * [Accessing Secrets](#accessing-secrets)
     * [Best Practices](#best-practices)
+* [Troubleshooting](#troubleshooting)
 * [References](#references)
 
 ## Services
@@ -166,6 +167,38 @@ Note that secrets can also be declaratively defined in a YAML file, **BUT** any 
 ### Best Practices
 
 See [Best Practices when using Secrets](https://kubernetes.io/docs/concepts/configuration/secret/#best-practices).
+
+## Troubleshooting
+
+### Logs
+
+```
+# View the Pod's logs
+$ kubectl logs <pod-name>
+
+# View the logs for a specific container in a Pod
+$ kubectl logs <pod-name> -c <container-name>
+
+# View the logs for previously running Pod
+$ kubectl logs -p <pod-name>
+
+# Follow a Pod's logs
+$ kubectl logs -f <pod-name>
+```
+
+### Info
+
+```
+# View a Pod's configuration and events (ex. if it was restarted)
+$ kubectl describe pod <pod-name>
+
+# Change output formats
+$ kubectl get pod <pod-name> -o yaml|json
+$ kubectl get deployment <pod-name> -o yaml|json
+
+# Go into a Pod
+$ kubectl exec <pod-name> -it -- <shell>
+```
 
 ## References
 
