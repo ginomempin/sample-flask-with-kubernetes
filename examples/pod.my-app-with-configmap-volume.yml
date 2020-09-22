@@ -4,9 +4,9 @@ metadata:
   name: my-app-with-configmap
 spec:
   volumes:
-    - name: app-config-volume
-      configMap:
-        name: app-settings
+  - name: app-config-volume
+    configMap:
+      name: app-settings
   containers:
   - name: my-app-with-configmap
     image: nginx:alpine
@@ -15,8 +15,8 @@ spec:
         memory: "128Mi"
         cpu: "500m"
     volumeMounts:
-      - name: app-config-volume
-        mountPath: /etc/config
+    - name: app-config-volume
+      mountPath: /etc/config
 
 # For each key-value pair in the 'app-settings' ConfigMap,
 # a file would be created in /etc/config. The key would

@@ -13,6 +13,10 @@ These are my notes from tutorials on using K8s to deploy applications.
     * [PersistentVolume](#persistentvolume)
     * [StorageClass](#storageclass)
 * [ConfigMap](#configmap)
+* [Secrets](#secrets)
+    * [Creating a Secret](#creating-a-secret)
+    * [Accessing Secrets](#accessing-secrets)
+    * [Best Practices](#best-practices)
 * [References](#references)
 
 ## Services
@@ -114,6 +118,54 @@ It can be accessed from a Pod using:
 
 * Environment variables (key-value pairs)
 * ConfigMap volume (accessed as files)
+
+## Secrets
+
+![Secrets Description](./docs/secrets.description.png)
+
+### Creating Secrets
+
+```
+# Create a Secret and store securely in Kubernetes
+$ kubectl create secret generic my-secrets --from-literal=pwd=my-password
+
+# Create a Secret from a file
+$ kubectl create secret generic my-secrets --from-file=ssh-key=~/.ssh/id_rsa
+
+# Create a Secret for certificates
+$ kubectl create secret tls tls-secret --cert=path/to/cert --key=path/to/key
+```
+
+Note that secrets can also be declaratively defined in a YAML file, **BUT** any secret data is only base64-encoded in the manifest file, which are easily decoded. Also, manifest files are typically checked-in source control and **it is bad to have secret data available from source control**.
+
+### Accessing Secrets
+
+* As environment variables (similar to [ConfigMaps](#configmap))
+    ```
+    env:
+    - name: DATABASE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: pwd
+
+    ```
+* As volumes (similar to [ConfigMaps](#configmap)) where each key-value becomes file-content
+    ```
+    volumes:
+    - name: app-secrets
+      secret:
+        secretName: my-secrets
+    containers:
+      volumeMounts:
+      - name: app-secrets
+        mountPath: /etc/passwd
+        readOnly: true
+    ```
+
+### Best Practices
+
+See [Best Practices when using Secrets](https://kubernetes.io/docs/concepts/configuration/secret/#best-practices).
 
 ## References
 
