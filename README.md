@@ -9,6 +9,9 @@ These are my notes from tutorials on using K8s to deploy applications.
     * [NodePort](#nodeport)
     * [LoadBalancer](#loadbalancer)
     * [ExternalName](#externalname)
+* [Volumes](#volumes)
+    * [PersistentVolume](#persistentvolume)
+    * [StorageClass](#storageclass)
 * [References](#references)
 
 ## Services
@@ -46,6 +49,44 @@ Services abstract pod IP addresses from consumers. Pods are accessed instead via
 
 ![External Name Diagram](./docs/service.externalname.diagram.png)
 
+## Volumes
+
+### PersistentVolume
+
+A **PersistentVolume (PV)** is a cluster-wide storage unit provisioned by an administrator with a lifecycle **independent** from a Pod.
+A **PersistentVolumeClaim (PVC)** is a request for a storage unit **PV**.
+
+![PV and PVC 1](./docs/volume.pvandpvc.1.png)
+
+![Pods and PV](./docs/volume.pvandpvc.2.png)
+
+Step-by-Step Setup:
+
+1. Create network storage resources (NFS, cloud, etc.)
+1. Create a **PV** and send to the Kubernetes API
+1. Create a **PVC** to use the **PV**
+1. Bind the **PVC** to the **PV** using Kubernetes API
+1. Reference the **PVC** from the Pod or Deployment
+    * Define a `spec:volumes:persistentVolumeClaim:` for each claim
+    * Reference the `volumes:name:` in the `containers:volumeMounts:`
+
+![PV and PVC 2](./docs/volume.pvandpvc.3.png)
+
+### StorageClass
+
+A **StorageClass (SC)** provides a dynamic provisioning of **PVs**.
+
+![StorageClass Diagram](./docs/volume.storageclass.png)
+
+Step-by-Step Setup:
+
+1. Create **SC**
+1. Create **PVC** that references the **SC**
+1. Kubernetes uses a **SC** provisioner to provision a **PV**
+1. After the storage is provisioned, the **PV** is bound to the **PVC**
+1. Reference the **PVC** from the Pod or Deployment (same as in [PVs](#persistentvolume))
+
 ## References
 
 * [Kubernetes for Developers: Core Concepts](https://app.pluralsight.com/library/courses/kubernetes-developers-core-concepts)
+* [Kubernetes Examples](https://github.com/kubernetes/examples)
