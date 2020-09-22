@@ -10,7 +10,6 @@ These are my notes from tutorials on using K8s to deploy applications.
     * [LoadBalancer](#loadbalancer)
     * [ExternalName](#externalname)
 * [References](#references)
-    * [Kubernetes for Developers: Core Concepts](https://app.pluralsight.com/library/courses/kubernetes-developers-core-concepts)
 
 ## Services
 
@@ -46,3 +45,7 @@ Services abstract pod IP addresses from consumers. Pods are accessed instead via
 * Useful for apps by referencing the alias instead of the actual external domain
 
 ![External Name Diagram](./docs/service.externalname.diagram.png)
+
+## References
+
+* [Kubernetes for Developers: Core Concepts](https://app.pluralsight.com/library/courses/kubernetes-developers-core-concepts)
