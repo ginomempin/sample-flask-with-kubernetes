@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-nginx-standalone
+  labels:
+    tier: proxy
+    rel: stable
+spec:
+  containers:
+  - name: my-nginx
+    image: nginx:alpine
+    ports:
+      - containerPort: 80
+    livenessProbe:
+      httpGet:
+        path: /index.html
+        port: 80
+      initialDelaySeconds: 15
+      timeoutSeconds: 2
+      periodSeconds: 5
+      failureThreshold: 1
+    resources:
+      requests:
+        memory: "1.1G"
+        cpu: "0.4"
+      limits:
+        memory: "1.5G"
+        cpu: "2.1"
