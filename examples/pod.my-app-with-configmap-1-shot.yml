@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app-with-configmap
+spec:
+  containers:
+  - name: my-app-with-configmap
+    image: nginx:alpine
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    envFrom:
+    - configMapRef:
+        name: app-settings
+
+
+# Load the entire ConfigMap, where 1 environment variable will
+# be created for each key-value pair entry of the ConfigMap.

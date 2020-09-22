@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app-with-configmap
+spec:
+  volumes:
+    - name: app-config-volume
+      configMap:
+        name: app-settings
+  containers:
+  - name: my-app-with-configmap
+    image: nginx:alpine
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    volumeMounts:
+      - name: app-config-volume
+        mountPath: /etc/config
+
+# For each key-value pair in the 'app-settings' ConfigMap,
+# a file would be created in /etc/config. The key would
+# be the filename and the value would be the file contents.
+#
+# When the configuration changes, the files in the volume
+# will also be automatically updated.

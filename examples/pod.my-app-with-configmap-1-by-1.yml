@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app-with-configmap
+spec:
+  containers:
+  - name: my-app-with-configmap
+    image: nginx:alpine
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    env:
+    - name: PREFIX
+      valueFrom:
+        configMapKeyRef:
+          name: app-settings
+          key: prefix
+    - name: LIMITS
+      valueFrom:
+        configMapKeyRef:
+          name: app-settings
+          key: limits
+
+
+# Load individual key-value pairs into separate environment variables.
+# This is useful if the app does not need the entire ConfigMap, but
+# just specific entries from it.

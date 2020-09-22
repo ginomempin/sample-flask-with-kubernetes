@@ -12,6 +12,7 @@ These are my notes from tutorials on using K8s to deploy applications.
 * [Volumes](#volumes)
     * [PersistentVolume](#persistentvolume)
     * [StorageClass](#storageclass)
+* [ConfigMap](#configmap)
 * [References](#references)
 
 ## Services
@@ -85,6 +86,34 @@ Step-by-Step Setup:
 1. Kubernetes uses a **SC** provisioner to provision a **PV**
 1. After the storage is provisioned, the **PV** is bound to the **PVC**
 1. Reference the **PVC** from the Pod or Deployment (same as in [PVs](#persistentvolume))
+
+### ConfigMap
+
+It provides a way to inject configuration data into a container.
+
+It can be provided in the form of:
+
+* Key-Value pairs passed to `kubectl create configmap <name>`
+    ```
+    $ kubectl create configmap <name> --from-file=<path-to-file>
+
+    $ kubectl create configmap <name> --from-env-file=<path-to-file>
+
+    $ kubectl create configmap <name> --from-literal=key1=val1 \
+                                      --from-literal=key2=val2
+
+    ```
+* ConfigMap manifest (YAML file)
+    ```
+    $ kubectl create|apply -f configmap.manifest.yml
+
+    ```
+* Entire files (the filename would be the key, the contents would be the value)
+
+It can be accessed from a Pod using:
+
+* Environment variables (key-value pairs)
+* ConfigMap volume (accessed as files)
 
 ## References
 

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-settings
+data:
+  prefix: "MyApp"
+  limits: "3"
+  limits.override: "false"
