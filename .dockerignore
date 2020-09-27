@@ -1,0 +1,11 @@
+# Env-Specifc
+.git*
+.vscode
+
+# Python-Specific
+.mypy*
+
+# Documentation
+LICENSE
+docs
+examples

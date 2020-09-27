@@ -18,6 +18,7 @@ These are my notes from tutorials on using K8s to deploy applications.
     * [Accessing Secrets](#accessing-secrets)
     * [Best Practices](#best-practices)
 * [Troubleshooting](#troubleshooting)
+* [Sample Application](#sample-application)
 * [References](#references)
 
 ## Services
@@ -200,7 +201,33 @@ $ kubectl get deployment <pod-name> -o yaml|json
 $ kubectl exec <pod-name> -it -- <shell>
 ```
 
+## Sample Application
+
+### Setup Dependencies
+
+* Install Docker
+* Install app dependencies
+    ```
+    $ pipenv install --dev
+
+    ```
+
+### Run App on Local Env
+
+```
+$ pipenv shell
+$ pipenv run run_app_local
+```
+
+### Run App Inside Docker Container
+
+```
+$ ./scripts/build_app_image.sh
+$ ./scripts/run_app_image.sh
+```
+
 ## References
 
+* [What exactly is Kubernetes anyway?](https://dev.to/sarahob/what-exactly-is-kubernetes-anyway-4k9h)
 * [Kubernetes for Developers: Core Concepts](https://app.pluralsight.com/library/courses/kubernetes-developers-core-concepts)
 * [Kubernetes Examples](https://github.com/kubernetes/examples)
