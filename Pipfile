@@ -13,4 +13,4 @@ gunicorn = "*"
 python_version = "3.8"
 
 [scripts]
-run_app_local = "./scripts/run_app_local.sh"
+local = "./scripts/run_app_local.sh"

@@ -1,9 +1,8 @@
-from flask import Flask, make_response
+from flask import Flask, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 
-@app.route("/")
+@app.route('/')
 def root():
-    data = {"a": 1, "b": 2}
-    return make_response(data)
+    return render_template('index.html', message='You accessed the app.')

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: my-flask-app
+  name: flask-app-deployment
+spec:
+  replicas: 4
+  revisionHistoryLimit: 2
+  minReadySeconds: 5
+  progressDeadlineSeconds: 60
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: my-flask-app
+  template:
+    metadata:
+      labels:
+        app: my-flask-app
+    spec:
+      containers:
+      - name: flask-app-container
+        image: flask-app-image:1.0.0
+        ports:
+        - containerPort: 5500
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"

@@ -216,8 +216,10 @@ $ kubectl exec <pod-name> -it -- <shell>
 
 ```
 $ pipenv shell
-$ pipenv run run_app_local
+$ pipenv run local
 ```
+
+Then access the app's endpoint at <http://localhost:5500>.
 
 ### Run App Inside Docker Container
 
@@ -226,8 +228,41 @@ $ ./scripts/build_app_image.sh
 $ ./scripts/run_app_image.sh
 ```
 
+Then access the app's endpoint at <http://localhost:5500>.
+
+### Deploy App
+
+#### With NodePort
+
+```
+$ ./scripts/deploy_app_nodeport.sh
+```
+
+Then access the app's endpoint at <http://localhost:30007>.
+
+#### With LoadBalancer
+
+```
+$ ./scripts/deploy_app_loadbalancer.sh
+```
+
+Then access the app's endpoint at <http://localhost:8000>.
+
+#### Undeploy
+
+```
+$ ./scripts/undeploy_app.sh
+$ kubectl get all --show-labels
+NAME                                        READY   STATUS        RESTARTS   AGE   LABELS
+pod/flask-app-deployment-684cdf89ff-5ngbq   1/1     Terminating   0          58s   app=my-flask-app,pod-template-hash=684cdf89ff
+pod/flask-app-deployment-684cdf89ff-vs5pg   1/1     Terminating   0          58s   app=my-flask-app,pod-template-hash=684cdf89ff
+pod/flask-app-deployment-684cdf89ff-xsgjk   1/1     Terminating   0          58s   app=my-flask-app,pod-template-hash=684cdf89ff
+...
+```
+
 ## References
 
 * [What exactly is Kubernetes anyway?](https://dev.to/sarahob/what-exactly-is-kubernetes-anyway-4k9h)
 * [Kubernetes for Developers: Core Concepts](https://app.pluralsight.com/library/courses/kubernetes-developers-core-concepts)
+* [Kubernetes for Developers: Deploying Your Code](https://app.pluralsight.com/library/courses/kubernetes-developers-deploying-code/table-of-contents)
 * [Kubernetes Examples](https://github.com/kubernetes/examples)
