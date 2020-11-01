@@ -17,6 +17,9 @@ These are my notes from tutorials on using K8s to deploy applications.
     * [Creating a Secret](#creating-a-secret)
     * [Accessing Secrets](#accessing-secrets)
     * [Best Practices](#best-practices)
+* [Deployments](#deployments)
+    * [RollingUpdate](#rollingupdate)
+    * [Canary](#canary)
 * [Troubleshooting](#troubleshooting)
 * [Sample Application](#sample-application)
 * [References](#references)
@@ -165,6 +168,24 @@ Note that secrets can also be declaratively defined in a YAML file, **BUT** any 
         readOnly: true
     ```
 
+## Deployments
+
+### RollingUpdate
+
+![RollingUpdate Deployment 1](./docs/deployment.rollingupdate.1.png)
+
+![RollingUpdate Deployment 2](./docs/deployment.rollingupdate.2.png)
+
+![RollingUpdate Deployment 3](./docs/deployment.rollingupdate.3.png)
+
+...and so on...
+
+![RollingUpdate Deployment 4](./docs/deployment.rollingupdate.4.png)
+
+### Canary
+
+![Canary Deployment](./docs/deployment.canary.png)
+
 ### Best Practices
 
 See [Best Practices when using Secrets](https://kubernetes.io/docs/concepts/configuration/secret/#best-practices).
@@ -205,8 +226,8 @@ $ kubectl exec <pod-name> -it -- <shell>
 
 ### Setup Dependencies
 
-* Install Docker
-* Install app dependencies
+1. Install Docker
+1. Install app dependencies
     ```
     $ pipenv install --dev
 
@@ -214,49 +235,139 @@ $ kubectl exec <pod-name> -it -- <shell>
 
 ### Run App on Local Env
 
-```
-$ pipenv shell
-$ pipenv run local
-```
+1. Run the app
+    ```
+    $ pipenv shell
+    $ pipenv run local
 
-Then access the app's endpoint at <http://localhost:5500>.
+    ```
+1. Access the app's endpoint at <http://localhost:5500>
 
 ### Run App Inside Docker Container
 
-```
-$ ./scripts/build_app_image.sh
-$ ./scripts/run_app_image.sh
-```
+1. Build the app's Docker image
+    ```
+    $ ./scripts/build_app_image.sh
+    ...
+    -------------
+    REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+    my-flask-app-image-canary   1.0.0               bdbdaf184ca2        1 second ago        131MB
+    my-flask-app-image-stable   1.0.0               a9d0c55ac9c1        12 seconds ago      131MB
 
-Then access the app's endpoint at <http://localhost:5500>.
+    ```
+1. Run either the stable or the canary image
+    * STABLE
+        ```
+        $ ./scripts/run_app_image.sh -s
+
+        ```
+    * CANARY
+        ```
+        $ ./scripts/run_app_image.sh -c
+
+        ```
+1. Access the app's endpoint at <http://localhost:5500>
+    * If you ran the stable version, you should see "*You accessed the STABLE version of the app.*"
+    * If you ran the canary version, you should see "*You accessed the CANARY version of the app.*"
 
 ### Deploy App
 
 #### With NodePort
 
-```
-$ ./scripts/deploy_app_nodeport.sh
-```
+1. Deploy either the stable or the canary image
+    * STABLE
+        ```
+        $ ./scripts/deploy_app_nodeport.sh -s
 
-Then access the app's endpoint at <http://localhost:30007>.
+        deployment.apps/flask-app-deployment-stable created
+        service/flask-app-nodeport created
+        Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+        Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+        Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+        Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+        Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+        deployment "flask-app-deployment-stable" successfully rolled out
+        NAME                                              READY   STATUS    RESTARTS   AGE
+        pod/flask-app-deployment-stable-b75cc6d88-4zz7r   1/1     Running   0          7s
+        pod/flask-app-deployment-stable-b75cc6d88-88dv6   1/1     Running   0          7s
+        pod/flask-app-deployment-stable-b75cc6d88-qxvb8   1/1     Running   0          7s
+        pod/flask-app-deployment-stable-b75cc6d88-rp5td   1/1     Running   0          7s
+
+        NAME                         TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+        service/flask-app-nodeport   NodePort   10.98.28.253   <none>        5500:30007/TCP   7s
+
+        NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+        deployment.apps/flask-app-deployment-stable   4/4     4            4           7s
+
+        ```
+    * CANARY
+        ```
+        $ ./scripts/deploy_app_nodeport.sh -c
+
+        deployment.apps/flask-app-deployment-canary created
+        service/flask-app-nodeport created
+        Waiting for deployment "flask-app-deployment-canary" rollout to finish: 0 of 1 updated replicas are available...
+        deployment "flask-app-deployment-canary" successfully rolled out
+        NAME                                              READY   STATUS    RESTARTS   AGE
+        pod/flask-app-deployment-canary-dddbf7c97-bqbqc   1/1     Running   0          1s
+
+        NAME                         TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+        service/flask-app-nodeport   NodePort   10.97.213.126   <none>        5500:30007/TCP   1s
+
+        NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+        deployment.apps/flask-app-deployment-canary   1/1     1            1           1s
+
+        ```
+1. Access the app's endpoint at <http://localhost:30007>
+    * If you ran the stable version, there should be 4 pods
+    * If you ran the canary version, there should be only 1 pod
 
 #### With LoadBalancer
 
-```
-$ ./scripts/deploy_app_loadbalancer.sh
-```
+1. Deploy both the stable and the canary image
+    ```
+    $ ./scripts/deploy_app_loadbalancer.sh
 
-Then access the app's endpoint at <http://localhost:8000>.
+    deployment.apps/flask-app-deployment-stable created
+    Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+    Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+    Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+    Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+    Waiting for deployment "flask-app-deployment-stable" rollout to finish: 0 of 4 updated replicas are available...
+    deployment "flask-app-deployment-stable" successfully rolled out
+
+    deployment.apps/flask-app-deployment-canary created
+    Waiting for deployment "flask-app-deployment-canary" rollout to finish: 0 of 1 updated replicas are available...
+    deployment "flask-app-deployment-canary" successfully rolled out
+
+    NAME                                              READY   STATUS    RESTARTS   AGE
+    pod/flask-app-deployment-canary-dddbf7c97-wnv68   1/1     Running   0          2s
+    pod/flask-app-deployment-stable-b75cc6d88-8w46l   1/1     Running   0          8s
+    pod/flask-app-deployment-stable-b75cc6d88-bmwj4   1/1     Running   0          8s
+    pod/flask-app-deployment-stable-b75cc6d88-f5hww   1/1     Running   0          8s
+    pod/flask-app-deployment-stable-b75cc6d88-xk68q   1/1     Running   0          8s
+
+    NAME                             TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+    service/flask-app-loadbalancer   LoadBalancer   10.103.199.159   localhost     8000:31518/TCP   0s
+
+    NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/flask-app-deployment-canary   1/1     1            1           2s
+    deployment.apps/flask-app-deployment-stable   4/4     4            4           8s
+
+    ```
+1. Access the app's endpoint at <http://localhost:8000>
+    * Keep refreshing until you see both "*STABLE*" and "*CANARY*" versions
+    * Since the stable deployment has 4 pods, and the canary deployment has only 1 pod, and the Load Balancer service randomizes which pod to use, the canary version of the app will be hit less likely than the stable one
 
 #### Undeploy
 
 ```
 $ ./scripts/undeploy_app.sh
-$ kubectl get all --show-labels
-NAME                                        READY   STATUS        RESTARTS   AGE   LABELS
-pod/flask-app-deployment-684cdf89ff-5ngbq   1/1     Terminating   0          58s   app=my-flask-app,pod-template-hash=684cdf89ff
-pod/flask-app-deployment-684cdf89ff-vs5pg   1/1     Terminating   0          58s   app=my-flask-app,pod-template-hash=684cdf89ff
-pod/flask-app-deployment-684cdf89ff-xsgjk   1/1     Terminating   0          58s   app=my-flask-app,pod-template-hash=684cdf89ff
+
+NAME                                        READY   STATUS        RESTARTS   AGE
+pod/flask-app-deployment-684cdf89ff-5ngbq   1/1     Terminating   0          58s
+pod/flask-app-deployment-684cdf89ff-vs5pg   1/1     Terminating   0          58s
+pod/flask-app-deployment-684cdf89ff-xsgjk   1/1     Terminating   0          58s
 ...
 ```
 

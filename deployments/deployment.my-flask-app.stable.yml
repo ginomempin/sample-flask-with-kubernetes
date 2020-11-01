@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: my-flask-app
-  name: flask-app-deployment
+  name: flask-app-deployment-stable
 spec:
   replicas: 4
   revisionHistoryLimit: 2
@@ -17,14 +17,16 @@ spec:
   selector:
     matchLabels:
       app: my-flask-app
+      version: stable
   template:
     metadata:
       labels:
         app: my-flask-app
+        version: stable
     spec:
       containers:
-      - name: flask-app-container
-        image: flask-app-image:1.0.0
+      - name: my-flask-app-container-stable
+        image: my-flask-app-image:stable
         ports:
         - containerPort: 5500
         resources:

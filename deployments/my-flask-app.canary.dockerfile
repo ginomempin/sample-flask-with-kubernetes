@@ -1,7 +1,9 @@
 FROM python:3.8.6-slim
 
-LABEL NAME=flask-app-image
-LABEL VERSION=1.0.0
+LABEL NAME=my-flask-app-image
+LABEL VERSION=canary
+
+ENV VERSION="CANARY"
 
 WORKDIR /app
 
