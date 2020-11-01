@@ -20,6 +20,7 @@ These are my notes from tutorials on using K8s to deploy applications.
 * [Deployments](#deployments)
     * [RollingUpdate](#rollingupdate)
     * [Canary](#canary)
+    * [Blue/Green](#bluegreen)
 * [Troubleshooting](#troubleshooting)
 * [Sample Application](#sample-application)
 * [References](#references)
@@ -185,6 +186,18 @@ Note that secrets can also be declaratively defined in a YAML file, **BUT** any 
 ### Canary
 
 ![Canary Deployment](./docs/deployment.canary.png)
+
+### Blue/Green
+
+First, setup 2 identical environments: 1 for public use (**blue**) and 1 for internal use (**green**).
+
+![Blue/Green Deployment 1](./docs/deployment.blue-green.1.png)
+
+Next, once all the tests on the **green** deployment passes, switch the public service to serve the **green** deployment.
+
+![Blue/Green Deployment 2](./docs/deployment.blue-green.2.png)
+
+Finally, delete the old **blue** deployment.
 
 ### Best Practices
 
